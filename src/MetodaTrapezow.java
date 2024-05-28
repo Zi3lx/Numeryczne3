@@ -39,15 +39,11 @@ WYJSCIE
     */
 
 import java.util.function.DoubleUnaryOperator;
-public class MetodaTrapezow {
-    double Xp ; 
-    double Xk;
-    int n;
+public class MetodaTrapezow extends Metoda {
+
 
     public MetodaTrapezow(double Xp, double Xk, int n){
-        this.Xp = Xp;
-        this.Xk = Xk;
-        this.n  = n;
+        super(Xp, Xk, n);
     }
 
     private double dx() {
@@ -55,10 +51,9 @@ public class MetodaTrapezow {
     }
     private double f(double v,DoubleUnaryOperator function){
         return function.applyAsDouble(v);
-        
     }
 
-    public double oblicz(DoubleUnaryOperator function) {
+    public double result(DoubleUnaryOperator function) {
         double s = 0.0;
         double dx = dx();
         for (int i = 1; i < n; i++) {

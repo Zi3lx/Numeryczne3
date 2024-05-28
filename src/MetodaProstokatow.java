@@ -1,28 +1,22 @@
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
 
-public class MetodaProstokatow {
+public class MetodaProstokatow extends Metoda {
 
-    private double a;
-    private double b;
-    private int n;
-
-    public MetodaProstokatow(double a, double b, int n) {
-        this.a = a;
-        this.b = b;
-        this.n = n;
+    public MetodaProstokatow(double Xp, double Xk, int n) {
+        super(Xp, Xk, n);
     }
 
-    private double f(double v, DoubleUnaryOperator function) {
+    private double f(double v,DoubleUnaryOperator function){
         return function.applyAsDouble(v);
     }
-
-    public double obliczCalke(DoubleUnaryOperator function) {
+    public double result(DoubleUnaryOperator function) {
         double suma = 0.0;
-        double dx = (b - a) / n;
+        double dx = (Xk - Xp) / n;
 
         for (int i = 0; i < n; i++) {
-            double x = a + i * dx;
-            suma += f(x, function) * dx;
+            double x = Xp + i * dx;
+            suma += f(x, function) *  dx;
         }
         return suma;
     }

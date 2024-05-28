@@ -1,76 +1,109 @@
+import java.util.Random;
 import java.util.function.DoubleUnaryOperator;
 public class Main {
     public static void main(String[] args) {
-        double a = 2;
-        double b = 1;
-        int n = 100000;
-        double elipsa = Math.PI * ((3/2)*(a+b) - Math.sqrt(a*b)); // liczone z przybliżonego wzoru
+        testy();
+    }
 
+
+
+    public static void testy(){
         DoubleUnaryOperator circleFunction = x -> Math.sqrt(1 - x * x);
-        DoubleUnaryOperator circleDerivative = x -> -x / Math.sqrt(1 - x * x);
+        System.out.println("S1\noczekiwane "+ Math.PI/2);
+        MetodaProstokatow p1 = new MetodaProstokatow(-1, 1, 1000);
+        System.out.println("metoda prostokatow "+ p1.result(circleFunction));
+        MetodaTrapezow t1 = new MetodaTrapezow(-1, 1, 10000);
+        System.out.println("metoda trapezow "+t1.result(circleFunction));
+        MetodaSimpsona s1 = new MetodaSimpsona(-1, 1, 10000);
+        System.out.println("metoda simpsona " + s1.result(circleFunction));;
 
         DoubleUnaryOperator UFunction = x -> x * x;
+        System.out.println("S2\noczekiwane 1/3");
+        MetodaProstokatow p2 = new MetodaProstokatow(0, 1, 1000);
+        System.out.println("metoda prostokatow "+ p2.result(UFunction));
+        MetodaTrapezow t2 = new MetodaTrapezow(0, 1, 10000);
+        System.out.println("metoda trapezow "+t2.result(UFunction));
+        MetodaSimpsona s2 = new MetodaSimpsona(0, 1, 10000);
+        System.out.println("metoda simpsona " + s2.result(UFunction) + "\n");
 
-        DoubleUnaryOperator ellipseFunction = x -> Math.sqrt(1 - x * x / (a * a)) * b;
-        DoubleUnaryOperator ellipseDerivative = x -> -x / (a * a) * Math.sqrt(1 - x * x / (a * a)) * b;
+
+        Random random = new Random();
+        for (int i = 1; i < 10; i++) {
+            double a = random.nextInt(10) + 1;
+            double b = random.nextInt(10) + 1;
+
+            DoubleUnaryOperator ellipseFunction = x -> Math.sqrt(1 - x * x / (a * a)) * b;
+
+            System.out.println("Elipsa próba: " + i + " Oczekiwana: " + (Math.PI * a * b));
+            MetodaProstokatow p3 = new MetodaProstokatow(-a, a, 1000);
+            System.out.println("metoda prostokatow " + p3.result(ellipseFunction) + " dla a: " + a + " b: " + b);
+            MetodaTrapezow t3 = new MetodaTrapezow(-a, a, 10000);
+            System.out.println("metoda trapezow " + t3.result(ellipseFunction) + " dla a: " + a + " b: " + b);
+            MetodaSimpsona s3 = new MetodaSimpsona(-a, a, 10000);
+            System.out.println("metoda simpsona " + s3.result(ellipseFunction) + " dla a: " + a + " b: " + b + "\n");
+        }
+
 
         DoubleUnaryOperator sinFunction = x -> Math.sin(x);
-        DoubleUnaryOperator sinDerivative = x -> Math.cos(x);
+        System.out.println("S4 \noczekiwane: 2 ");
+        MetodaProstokatow p4 = new MetodaProstokatow(0, Math.PI, 10000);
+        System.out.println("metoda prostokatow " + p4.result(sinFunction));
+        MetodaTrapezow t4 = new MetodaTrapezow(0, Math.PI, 10000);
+        System.out.println("metoda trapezow " + t4.result(sinFunction));
+        MetodaSimpsona s4 = new MetodaSimpsona(0, Math.PI, 10000);
+        System.out.println("metoda simpsona " + s4.result(sinFunction) + "\n");
 
+        DoubleUnaryOperator circleDerivative = x -> {
+            if (1 - x * x == 0) {
+                return 0;
+            }
+            return -x / Math.sqrt(1 - x * x);
+        };
+        DoubleUnaryOperator sinDerivative = x -> Math.cos(x);
         DoubleUnaryOperator circleLengthFunction = x -> Math.sqrt(1 + Math.pow(circleDerivative.applyAsDouble(x), 2));
-        DoubleUnaryOperator ellipseLengthFunction = x -> Math.sqrt(1 + Math.pow(ellipseDerivative.applyAsDouble(x), 2));
         DoubleUnaryOperator sinLengthFunction = x -> Math.sqrt(1 + Math.pow(sinDerivative.applyAsDouble(x), 2));
 
-        System.out.println("POLA: ");
-        System.out.println("Metoda prostokątów:");
-        MetodaProstokatow mp = new MetodaProstokatow(0, 1, n);
-        System.out.println("oczekiwane kolo " + Math.PI / 4 + ", wynik: " + mp.obliczCalke(circleFunction));//1.570794663715291
+        System.out.println("M1\noczekiwane "+ Math.PI / 2);
+        MetodaProstokatow p5 = new MetodaProstokatow(0, 1, 10000);
+        System.out.println("metoda prostokatow " + p5.result(circleLengthFunction));
+        MetodaTrapezow t5 = new MetodaTrapezow(0, 1, 10000);
+        System.out.println("metoda trapezow " + t5.result(circleLengthFunction));
+        MetodaSimpsona s5 = new MetodaSimpsona(0, 1, 10000);
+        System.out.println("metoda simpsona " + s5.result(circleLengthFunction) + "\n");
 
-        MetodaProstokatow mp1 = new MetodaProstokatow(0, 1, n);
-        System.out.println("oczekiwane 0.5, parabola " + ", wynik: " + mp1.obliczCalke(UFunction));//0.33328333499999957
+        for (int i = 1; i < 10; i++) {
+            double a = random.nextInt(10) + 1;
+            double b = random.nextInt(10) + 1;
+            double h = Math.pow((a - b), 2) / Math.pow((a + b), 2);
 
-        MetodaProstokatow mp2 = new MetodaProstokatow(-2, 2, n);
-        System.out.println("oczekiwane elipsa " + Math.PI / 2 + ", wynik: " + mp2.obliczCalke(ellipseFunction));//3.141589327430582
+            DoubleUnaryOperator ellipseDerivative = x -> {
+                if (1 - (x * x) / (a * a) < 1e-10) {
+                    return 0;
+                }
+                return -((b * x) / (a * a * Math.sqrt(1 - (x * x) / (a * a))));
+            };
+            DoubleUnaryOperator ellipseLengthFunction = x -> Math.sqrt(1 + Math.pow(ellipseDerivative.applyAsDouble(x), 2));
 
-        MetodaProstokatow mp3 = new MetodaProstokatow(0, Math.PI, n);
-        System.out.println("oczekiwane sinus " + Math.PI / 2 + ", wynik: " + mp3.obliczCalke(sinFunction));//1.999999983550664
+            System.out.println("M2 Elipsa próba: " + i);
 
+            double expectedCircumference = Math.PI * (a + b) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
+            System.out.println("Oczekiwane elipsa: " + expectedCircumference);
+            MetodaProstokatow p6 = new MetodaProstokatow(-a,  a, 10000);
+            System.out.println("Metoda prostokatow: " + p6.result(ellipseLengthFunction) * 2 + " dla a: " + a + " b: " + b);
+            MetodaTrapezow t6 = new MetodaTrapezow(-a, a, 10000);
+            System.out.println("Metoda trapezow: " + t6.result(ellipseLengthFunction) * 2 + " dla a: " + a + " b: " + b);
+            MetodaSimpsona s6 = new MetodaSimpsona(-a, a, 10000);
+            System.out.println("Metoda Simpsona: " + s6.result(ellipseLengthFunction) * 2 + " dla a: " + a + " b: " + b + "\n");
+        }
 
+        System.out.println("M3\noczekiwane 7.6404");
+        MetodaProstokatow p7 = new MetodaProstokatow(0, 2 * Math.PI, 1000);
+        System.out.println("metoda prostokatow "+ p7.result(sinLengthFunction));
+        MetodaTrapezow t7 = new MetodaTrapezow(0, 2 * Math.PI, 10000);
+        System.out.println("metoda trapezow "+t7.result(sinLengthFunction));
+        MetodaSimpsona s7 = new MetodaSimpsona(0, 2 * Math.PI, 10000);
+        System.out.println("metoda simpsona " + s7.result(sinLengthFunction));
 
-        System.out.println("Metoda trapezów");
-        MetodaTrapezow s = new MetodaTrapezow(0, 1, n);
-        System.out.println("oczekiwane "+ Math.PI / 4 +", wynik: "+s.oblicz(circleFunction));//1.5707946637152863
-
-        MetodaTrapezow s2 = new MetodaTrapezow(0, 1, n);
-        System.out.println("oczekiwane 0.5 wynik: " + s2.oblicz(UFunction)); // 0.333
-
-        MetodaTrapezow s3 = new MetodaTrapezow(-2, 2, n);
-        System.out.println("oczekiwane "+ Math.PI + ", wynik: "+ s3.oblicz(ellipseFunction));//3.1415893274305726
-
-        MetodaTrapezow s4 = new MetodaTrapezow(0, Math.PI, n);
-        System.out.println("oczekiwane 2 wynik: " + s4.oblicz(sinFunction)); // 1.9999999835506608
-
-        //-----------------------------DLUGOSCI-----------------------------------------
-        System.out.println("Obwody");
-        System.out.println("Metoda prostoktów");
-        MetodaProstokatow mp4 = new MetodaProstokatow(0, 1, n);
-        System.out.println("Oczekiwana kola: " + 2*Math.PI/4 + ", otrzymane: " + mp4.obliczCalke(circleLengthFunction));
-
-        MetodaProstokatow mp5 = new MetodaProstokatow(-2, 2, n);
-        System.out.println("Oczekiwana elipsy: " + elipsa + ", otrzymane: " + mp5.obliczCalke(ellipseLengthFunction));;
-
-        MetodaProstokatow mp6 = new MetodaProstokatow(0, 2 * Math.PI, n);
-        System.out.println("Oczekiwana sin: " + 7.6404 + ", otrzymane: " + mp6.obliczCalke(sinLengthFunction));;
-
-
-        System.out.println("Metoda trapezów");
-        MetodaTrapezow s5 = new MetodaTrapezow(0, 1, n);
-        System.out.println("Oczekiwana kola: " + 2*Math.PI/4 + ", otrzymane: " + s5.oblicz(circleLengthFunction));
-
-        MetodaTrapezow s6 = new MetodaTrapezow(-2, 2, n);
-        System.out.println("Oczekiwana elipsy: " + elipsa + ", otrzymane: " + s6.oblicz(ellipseLengthFunction));;
-
-        MetodaTrapezow s7 = new MetodaTrapezow(0, 2 * Math.PI, n);
-        System.out.println("Oczekiwana sin: " + 7.6404 + ", otrzymane: " + s7.oblicz(sinLengthFunction));
     }
+
 }
